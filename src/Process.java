@@ -1,2 +1,4 @@
-public class Process {
+import java.io.Serializable;
+
+public class Process implements Serializable {
 }
