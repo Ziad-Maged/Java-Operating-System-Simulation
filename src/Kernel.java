@@ -26,7 +26,7 @@ public class Kernel {
         BufferedReader br = new BufferedReader(new FileReader("Program_" + processID));
         ArrayList<String> processUnParsedLines = new ArrayList<>();
         int minimum = memorySize;
-        int maximum;
+        int maximum = 0;
         ProcessState state = ProcessState.NEW;
         while(br.ready()){
             processUnParsedLines.add(br.readLine());
