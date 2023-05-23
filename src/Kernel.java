@@ -25,11 +25,19 @@ public class Kernel {
     public static void allocateProcessToMemory(int processID) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader("Program_" + processID));
         ArrayList<String> processUnParsedLines = new ArrayList<>();
-        int minimum = memorySize;
+        int minimum = memorySize + 5;
         int maximum = memorySize;
+        int processProgramCounter = minimum + 5;
         ProcessState state = ProcessState.NEW;
         while(br.ready()){
             processUnParsedLines.add(br.readLine());
+        }
+        if(processUnParsedLines.size() + 5 < memory.length - memorySize){
+            memory[memorySize++] = processID;
+            memory[memorySize++] = state;
+            memory[memorySize++] = processProgramCounter;
+        }else {
+            //TODO LATER
         }
     }
 
