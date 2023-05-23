@@ -7,15 +7,18 @@ public class Kernel {
     static Semaphore inputMutex = new Semaphore(1);
     static Semaphore fileMutex = new Semaphore(1);
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void startProgram(){
         int time = 0;
-        Semaphore s = new Semaphore(1);
         boolean running = true;
         while (running){
             //TODO LATER
             time++;
             running = false;
         }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        Kernel.startProgram();
     }
 
 }
