@@ -1,8 +1,15 @@
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.Semaphore;
 
 public class Kernel {
 
     static Object[] memory = new Object[40];
+    static int memorySize = 0;
     static Semaphore outputMutex = new Semaphore(1);
     static Semaphore inputMutex = new Semaphore(1);
     static Semaphore fileMutex = new Semaphore(1);
@@ -14,6 +21,17 @@ public class Kernel {
             //TODO LATER
             time++;
             running = false;
+        }
+    }
+
+    public static void allocateProcessToMemory(int processID) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader("Program_" + processID));
+        ArrayList<String> processUnParsedLines = new ArrayList<>();
+        int minimum = memorySize;
+        int maximum;
+        ProcessState state = ProcessState.NEW;
+        while(br.ready()){
+            processUnParsedLines.add(br.readLine());
         }
     }
 

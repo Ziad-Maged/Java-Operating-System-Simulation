@@ -7,8 +7,9 @@ public class Interpreter {
     public static void semWait(String resourceType){
         switch(resourceType){
             case "file" ->{
-                if(!Kernel.fileMutex.tryAcquire())
+                if(!Kernel.fileMutex.tryAcquire()){
                     return;
+                }
             }
             case "userInput" -> {
                 if(!Kernel.inputMutex.tryAcquire())
