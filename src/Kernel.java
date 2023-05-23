@@ -26,7 +26,7 @@ public class Kernel {
         BufferedReader br = new BufferedReader(new FileReader("Program_" + processID));
         ArrayList<String> processUnParsedLines = new ArrayList<>();
         int minimum = memorySize + 5;
-        int maximum = memorySize;
+        int maximum = memorySize + 5;
         int processProgramCounter = minimum + 5;
         ProcessState state = ProcessState.NEW;
         while(br.ready()){
@@ -36,6 +36,11 @@ public class Kernel {
             memory[memorySize++] = processID;
             memory[memorySize++] = state;
             memory[memorySize++] = processProgramCounter;
+            memory[memorySize++] = minimum;
+            memory[memorySize++] = maximum + processUnParsedLines.size();
+            for(String e : processUnParsedLines){
+                memory[memorySize++] = e;
+            }
         }else {
             //TODO LATER
         }
