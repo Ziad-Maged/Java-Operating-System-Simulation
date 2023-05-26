@@ -33,4 +33,16 @@ public class Disk implements Serializable {
         return string.toString();
     }
 
+    public void write(){
+        try {
+            PrintWriter writer = new PrintWriter(new File("DISK.txt"));
+            for(Process e : processesOnDisk){
+                writer.println(e.toString());
+            }
+            writer.close();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
