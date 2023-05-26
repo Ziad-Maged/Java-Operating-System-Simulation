@@ -1,39 +1,39 @@
 public class Interpreter {
 
-    public static void print(String s){
-        System.out.println(s);
+    public static void parseCode(Instruction e){
+        //TODO LATER
+    }
+
+    public static void print(String message){
+        System.out.println(message);
+    }
+
+    public static void printFromTo(int a, int b){
+        System.out.print("[ ");
+        for(int i = a; i < b; i++){
+            System.out.print(i + ", ");
+        }
+        System.out.println(b + " ]");
+    }
+
+    public static void assign(String code){
+        //TODO
     }
 
     public static void semWait(String resourceType){
-        switch(resourceType){
-            case "file" ->{
-                if(!Kernel.fileMutex.tryAcquire()){
-                    return;
-                }
-            }
-            case "userInput" -> {
-                if(!Kernel.inputMutex.tryAcquire())
-                    return;
-            }
-            case "userOutput" -> {
-                if(!Kernel.outputMutex.tryAcquire())
-                    return;
-            }
-        }
+        //TODO LATER
     }
 
     public static void semSignal(String resourceType){
-        switch(resourceType){
-            case "file" ->{
-                Kernel.fileMutex.release();
-            }
-            case "userInput" ->{
-                Kernel.inputMutex.release();
-            }
-            case "userOutput" ->{
-                Kernel.outputMutex.release();
-            }
-        }
+        //TODO LATER
+    }
+
+    public static void writeFile(String fileName, String data){
+        //TODO LATER
+    }
+
+    public static void readFile(Instruction e, String fileName){
+        //TODO LATER
     }
 
 }

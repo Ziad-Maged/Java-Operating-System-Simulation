@@ -1,23 +1,37 @@
-public class Variable {
+import java.io.Serializable;
 
-    private final String variableName;
-    private Object variableData;
+public class Variable implements Serializable {
 
+    private String variableName;
+    private Object data;
 
-    public Variable(String variableName, Object variableData) {
+    public Variable(String variableName, Object data) {
         this.variableName = variableName;
-        this.variableData = variableData;
+        this.data = data;
     }
 
-    public Object getVariableData() {
-        return variableData;
+    public Variable(){
+        variableName = "null";
+        data = null;
     }
 
-    public String getVariableName() {
+    public String getVariableName(){
         return variableName;
     }
 
-    public void setVariableData(Object variableData) {
-        this.variableData = variableData;
+    public void setVariableName(String variableName) {
+        this.variableName = variableName;
+    }
+
+    public Object getData() {
+        return data;
+    }
+
+    public void setData(Object data) {
+        this.data = data;
+    }
+
+    public String toString(){
+        return "variableName=" + variableName + " data=" + (( data!=null )? data.toString():"null");
     }
 }
