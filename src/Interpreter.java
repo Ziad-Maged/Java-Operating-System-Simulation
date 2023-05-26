@@ -29,11 +29,37 @@ public class Interpreter {
     }
 
     public static void semWait(String resourceType){
-        //TODO LATER
+        switch (resourceType){
+            case "file" ->{
+                if(!Kernel.fileMutex.tryAcquire()){
+                    Scheduler.blockCurrentProcessOnResource("file");
+                }
+            }
+            case "userInput" ->{
+                if(!Kernel.userInputMutex.tryAcquire()){
+                    Scheduler.blockCurrentProcessOnResource("userInput");
+                }
+            }
+            case "userOutput" ->{
+                if(!Kernel.userOutputMutex.tryAcquire()){
+                    Scheduler.blockCurrentProcessOnResource("userOutput");
+                }
+            }
+        }
     }
 
     public static void semSignal(String resourceType){
-        //TODO LATER
+        switch(resourceType){
+            case "file" -> {
+                Kernel.fileMutex.release();
+            }
+            case "userInput" ->{
+                Kernel.userInputMutex.release();
+            }
+            case "userOutput" ->{
+                Kernel.userOutputMutex.release();
+            }
+        }
     }
 
     public static void writeFile(String fileName, String data){
