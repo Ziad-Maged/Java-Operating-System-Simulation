@@ -7,6 +7,7 @@ public class Process implements Serializable {
     private int currentExecutionTime;
     private boolean inDisk;
     private final int requiredSizeInMemory;
+    private int currentTimeSlice;
 
     public Process(String processName, PCB processControlBlock, int totalExecutionTime, int requiredSizeInMemory) {
         this.processName = processName;
@@ -14,6 +15,7 @@ public class Process implements Serializable {
         this.totalExecutionTime = totalExecutionTime;
         this.requiredSizeInMemory = requiredSizeInMemory;
         this.currentExecutionTime = 0;
+        this.currentTimeSlice = 0;
         this.inDisk = false;
     }
 
@@ -47,5 +49,13 @@ public class Process implements Serializable {
 
     public int getRequiredSizeInMemory() {
         return requiredSizeInMemory;
+    }
+
+    public int getCurrentTimeSlice() {
+        return currentTimeSlice;
+    }
+
+    public void setCurrentTimeSlice(int currentTimeSlice) {
+        this.currentTimeSlice = currentTimeSlice;
     }
 }
