@@ -38,6 +38,8 @@ public class Kernel {
                 int minimumInMemory = instructionsPointerInMemory;
                 PCB pcb = new PCB(processID, minimumInMemory, maximumInMemory);
                 Process process = new Process("Program_" + processID, pcb, instructions.size(), instructions.size() + 8);
+                for(Instruction e : instructions)
+                    process.getInstructions().add(e);
                 processes.add(process);
                 processPCBIndices.add(pcbPlaceholder);
                 memory[pcbPlaceholder++] = processID;
