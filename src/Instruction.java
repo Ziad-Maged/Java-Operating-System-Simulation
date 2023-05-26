@@ -1,4 +1,6 @@
-public class Instruction {
+import java.io.Serializable;
+
+public class Instruction implements Serializable {
     private final String instruction;
     private boolean dependent;
     private Object result;
