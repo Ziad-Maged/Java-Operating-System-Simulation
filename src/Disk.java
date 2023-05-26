@@ -22,4 +22,12 @@ public class Disk implements Serializable {
         }
     }
 
+    public String toString(){
+        StringBuilder string = new StringBuilder("");
+        for(Process e : processesOnDisk){
+            string.append(e.getProcessName()).append("\n").append(e.toString()).append("\n");
+        }
+        return string.toString();
+    }
+
 }
