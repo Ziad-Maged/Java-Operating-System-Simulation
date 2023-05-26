@@ -129,7 +129,6 @@ public class Interpreter {
     }
 
     public static void writeFile(String fileName, String data) {
-        //TODO LATER
         try{
             BufferedWriter br = new BufferedWriter(new FileWriter(fileName + ".txt"));
             br.write(data);
@@ -138,7 +137,6 @@ public class Interpreter {
     }
 
     public static void readFile(Instruction e, String fileName){
-        //TODO LATER
         try{
             BufferedReader br = new BufferedReader(new FileReader(fileName + ".txt"));
             String line = br.readLine();
