@@ -27,7 +27,18 @@ public class Scheduler {
     }
 
     public static void blockCurrentProcessOnResource(String resourceType){
-        //TODO
+        switch (resourceType){
+            case "file" ->{
+                fileBlockedQueue.add(currentRunningProcess);
+            }
+            case "userInput" ->{
+                userInputBlockedQueue.add(currentRunningProcess);
+            }
+            case "userOutput" ->{
+                userOutputBlockedQueue.add(currentRunningProcess);
+            }
+        }
+        generalBlockedQueue.add(currentRunningProcess);
     }
 
     public static void reschedule(){
