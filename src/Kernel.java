@@ -18,6 +18,7 @@ public class Kernel {
     public static void startProgram(){
         boolean running = true;
         int time = 0;
+        Process p;
         while(running){
             if(time == 0){
                 Kernel.allocateProcessToMemory(1);
@@ -131,14 +132,17 @@ public class Kernel {
             currentMemorySpace++;
             memory[placeholder] = memory[placeholder + 8 + p.getInstructions().size()];
             memory[placeholder + 8 + p.getInstructions().size()] = null;
+            memory[placeholder] = (Integer)memory[placeholder] - 8 - p.getInstructions().size();
             placeholder++;
             currentMemorySpace++;
             memory[placeholder] = memory[placeholder + 8 + p.getInstructions().size()];
             memory[placeholder + 8 + p.getInstructions().size()] = null;
+            memory[placeholder] = (Integer)memory[placeholder] - 8 - p.getInstructions().size();
             placeholder++;
             currentMemorySpace++;
             memory[placeholder] = memory[placeholder + 8 + p.getInstructions().size()];
             memory[placeholder + 8 + p.getInstructions().size()] = null;
+            memory[placeholder] = (Integer)memory[placeholder] - 8 - p.getInstructions().size();
             placeholder++;
             currentMemorySpace++;
             memory[placeholder] = memory[placeholder + 8 + p.getInstructions().size()];

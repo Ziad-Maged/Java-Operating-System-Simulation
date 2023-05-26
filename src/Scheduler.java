@@ -43,12 +43,17 @@ public class Scheduler {
     }
 
     public static void reschedule(){
-        if(!currentRunningProcess.getProcessControlBlock().getProcessState().equals(ProcessState.BLOCKED)){
-            readyQueue.add(currentRunningProcess);
-            currentRunningProcess.getProcessControlBlock().setProcessState(ProcessState.READY);
+        if(currentRunningProcess == null){
+            currentRunningProcess = readyQueue.remove();
+            currentRunningProcess.getProcessControlBlock().setProcessState(ProcessState.RUNNING);
+        }else{
+            if(!currentRunningProcess.getProcessControlBlock().getProcessState().equals(ProcessState.BLOCKED)){
+                readyQueue.add(currentRunningProcess);
+                currentRunningProcess.getProcessControlBlock().setProcessState(ProcessState.READY);
+            }
+            currentRunningProcess = readyQueue.remove();
+            currentRunningProcess.getProcessControlBlock().setProcessState(ProcessState.RUNNING);
         }
-        currentRunningProcess = readyQueue.remove();
-        currentRunningProcess.getProcessControlBlock().setProcessState(ProcessState.RUNNING);
     }
 
     public static void unblockProcessOnResource(String resourceType){
