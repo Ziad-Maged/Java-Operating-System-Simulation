@@ -1,1 +1,6 @@
-Process@73c6c3b2
+Process Name: Program_1
+Process Control Block: processID=1 processState=FINISHED PC=8 minimumInMemory=8 maximumInMemory=17
+Total Excution Time: 9
+Current Execution Time: 0
+Size in Memory: 17
+Time Slice: 0

@@ -93,7 +93,8 @@ public class Process implements Serializable {
         return instructions;
     }
 
-    public String toString(){
-        return "";
+    public  String toString(){
+        return "Process Name: " + processName + "\n" + "Process Control Block: " + processControlBlock +"\n"+ "Total Excution Time: "+ totalExecutionTime + "\n"
+                + "Current Execution Time: "+ currentExecutionTime + "\n" + "Size in Memory: "+requiredSizeInMemory +"\n" + "Time Slice: " + currentTimeSlice;
     }
 }

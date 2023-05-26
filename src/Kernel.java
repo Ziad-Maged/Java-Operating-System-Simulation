@@ -102,7 +102,7 @@ public class Kernel {
 
     private static Process processToSwap(int processID){
         for(Process e : processes){
-            if(e.getProcessControlBlock().getProcessID() == processID && !e.getProcessControlBlock().getProcessState().equals(ProcessState.RUNNING))
+            if(e.getProcessControlBlock().getProcessID() == processID && !e.getProcessControlBlock().getProcessState().equals(ProcessState.RUNNING) && !e.isInDisk())
                 return e;
         }
         return null;
