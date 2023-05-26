@@ -52,12 +52,15 @@ public class Interpreter {
         switch(resourceType){
             case "file" -> {
                 Kernel.fileMutex.release();
+                Scheduler.unblockProcessOnResource("file");
             }
             case "userInput" ->{
                 Kernel.userInputMutex.release();
+                Scheduler.unblockProcessOnResource("userInput");
             }
             case "userOutput" ->{
                 Kernel.userOutputMutex.release();
+                Scheduler.unblockProcessOnResource("userOutput");
             }
         }
     }
