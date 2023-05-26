@@ -61,8 +61,12 @@ public class Kernel {
         } catch (IOException ignored) {}
     }
 
-    public void swap(){
-        //TODO;
+    private static void memoryToDisk(){
+        //TODO
+    }
+
+    private static void diskToMemory(){
+        //TODO
     }
 
     private static void decodeInstruction(String instruction, String[] split, ArrayList<Instruction> instructions){
