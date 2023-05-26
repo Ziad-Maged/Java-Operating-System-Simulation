@@ -28,7 +28,7 @@ public class Kernel {
                 String[] fullInstruction = s.split(" ");
                 decodeInstruction(s, fullInstruction, instructions);
             }
-            if(instructions.size() + 8 < currentMemorySpace){
+            if(instructions.size() + 8 <= currentMemorySpace){
                 int maximumInMemory = instructionsPointerInMemory;
                 for(int i = instructions.size() - 1; i >= 0; i--){
                     memory[instructionsPointerInMemory--] = instructions.get(i);
