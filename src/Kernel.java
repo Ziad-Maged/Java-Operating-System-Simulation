@@ -7,8 +7,9 @@ import java.util.concurrent.Semaphore;
 public class Kernel {
 
     static Object[] memory = new Object[40];
+    static int instructionsPointerInMemory = memory.length;
     static int currentMemorySpace = memory.length;
-    static int placeholder = 0;
+    static int pcbPlaceholder = 0;
     static Semaphore fileMutex = new Semaphore(1);
     static Semaphore userInputMutex = new Semaphore(1);
     static Semaphore userOutputMutex = new Semaphore(1);
@@ -28,7 +29,35 @@ public class Kernel {
                 decodeInstruction(s, fullInstruction, instructions);
             }
             if(instructions.size() + 8 <= currentMemorySpace){
-                //TODO
+                int maximumInMemory = instructionsPointerInMemory;
+                for(int i = instructions.size() - 1; i >= 0; i--){
+                    memory[instructionsPointerInMemory--] = instructions.get(i);
+                    currentMemorySpace--;
+                }
+                int minimumInMemory = instructionsPointerInMemory;
+                PCB pcb = new PCB(processID, minimumInMemory, maximumInMemory);
+                Process process = new Process("Program_" + processID, pcb, instructions.size(), instructions.size() + 8);
+                processes.add(process);
+                processPCBIndices.add(pcbPlaceholder);
+                memory[pcbPlaceholder++] = processID;
+                currentMemorySpace--;
+                memory[pcbPlaceholder++] = pcb.getProcessState();
+                currentMemorySpace--;
+                memory[pcbPlaceholder++] = pcb.getProgramCounter();
+                currentMemorySpace--;
+                memory[pcbPlaceholder++] = pcb.getMinimumInMemory();
+                currentMemorySpace--;
+                memory[pcbPlaceholder++] = pcb.getMaximumInMemory();
+                currentMemorySpace--;
+                memory[pcbPlaceholder++] = new Variable();
+                process.setVar1((Variable) memory[pcbPlaceholder - 1]);
+                currentMemorySpace--;
+                memory[pcbPlaceholder++] = new Variable();
+                process.setVar2((Variable) memory[pcbPlaceholder - 1]);
+                currentMemorySpace--;
+                memory[pcbPlaceholder++] = new Variable();
+                process.setVar3((Variable) memory[pcbPlaceholder - 1]);
+                currentMemorySpace--;
             }else {
                 //TODO SWAPPING
             }
