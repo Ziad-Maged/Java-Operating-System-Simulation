@@ -9,7 +9,7 @@ public class Process implements Serializable {
     private final int requiredSizeInMemory;
     private int currentTimeSlice;
     private Variable var1;
-    private Variable va2;
+    private Variable var2;
     private Variable var3;
 
     public Process(String processName, PCB processControlBlock, int totalExecutionTime, int requiredSizeInMemory) {
@@ -70,12 +70,12 @@ public class Process implements Serializable {
         this.var1 = var1;
     }
 
-    public Variable getVa2() {
-        return va2;
+    public Variable getVar2() {
+        return var2;
     }
 
-    public void setVa2(Variable va2) {
-        this.va2 = va2;
+    public void setVar2(Variable va2) {
+        this.var2 = va2;
     }
 
     public Variable getVar3() {

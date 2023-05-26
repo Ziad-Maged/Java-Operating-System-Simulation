@@ -50,10 +50,13 @@ public class Kernel {
                 memory[pcbPlaceholder++] = pcb.getMaximumInMemory();
                 currentMemorySpace--;
                 memory[pcbPlaceholder++] = new Variable();
+                process.setVar1((Variable) memory[pcbPlaceholder - 1]);
                 currentMemorySpace--;
                 memory[pcbPlaceholder++] = new Variable();
+                process.setVar2((Variable) memory[pcbPlaceholder - 1]);
                 currentMemorySpace--;
                 memory[pcbPlaceholder++] = new Variable();
+                process.setVar3((Variable) memory[pcbPlaceholder - 1]);
                 currentMemorySpace--;
             }else {
                 //TODO SWAPPING
