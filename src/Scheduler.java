@@ -70,9 +70,11 @@ public class Scheduler {
             for(Process e : generalBlockedQueue){
                 if(e.equals(temp)){
                     generalBlockedQueue.remove(e);
-                    return;
+                    break;
                 }
             }
+            temp.getProcessControlBlock().setProcessState(ProcessState.READY);
+            readyQueue.add(temp);
         }
     }
 }
