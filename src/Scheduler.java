@@ -27,6 +27,7 @@ public class Scheduler {
     }
 
     public static void blockCurrentProcessOnResource(String resourceType){
+        currentRunningProcess.getProcessControlBlock().setProcessState(ProcessState.BLOCKED);
         switch (resourceType){
             case "file" ->{
                 fileBlockedQueue.add(currentRunningProcess);
@@ -42,10 +43,36 @@ public class Scheduler {
     }
 
     public static void reschedule(){
-        //TODO
+        if(!currentRunningProcess.getProcessControlBlock().getProcessState().equals(ProcessState.BLOCKED)){
+            readyQueue.add(currentRunningProcess);
+        }
+        currentRunningProcess = readyQueue.remove();
+        currentRunningProcess.getProcessControlBlock().setProcessState(ProcessState.RUNNING);
     }
 
     public static void unblockProcessOnResource(String resourceType){
-        //TODO
+        Process temp = null;
+        switch (resourceType){
+            case "file" ->{
+                if(!fileBlockedQueue.isEmpty())
+                    temp = fileBlockedQueue.remove();
+            }
+            case "userInput" ->{
+                if(!userInputBlockedQueue.isEmpty())
+                    temp = userInputBlockedQueue.remove();
+            }
+            case "userOutput" ->{
+                if(!userOutputBlockedQueue.isEmpty())
+                    temp = userOutputBlockedQueue.remove();
+            }
+        }
+        if(temp != null){
+            for(Process e : generalBlockedQueue){
+                if(e.equals(temp)){
+                    generalBlockedQueue.remove(e);
+                    return;
+                }
+            }
+        }
     }
 }
