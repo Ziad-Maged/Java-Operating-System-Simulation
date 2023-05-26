@@ -61,6 +61,10 @@ public class Kernel {
         } catch (IOException ignored) {}
     }
 
+    public void swap(){
+        //TODO;
+    }
+
     private static void decodeInstruction(String instruction, String[] split, ArrayList<Instruction> instructions){
         if(instruction.contains("assign") && instruction.contains("input")){
             instructions.add(new Instruction("input", false));
