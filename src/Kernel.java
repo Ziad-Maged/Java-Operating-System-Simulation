@@ -25,7 +25,7 @@ public class Kernel {
             if(time == 1){
                 Kernel.allocateProcessToMemory(2);
             }
-            if(time == 2){
+            if(time == 4){
                 Kernel.allocateProcessToMemory(3);
             }
             if(isDone()){
@@ -39,7 +39,6 @@ public class Kernel {
     private static boolean isDone(){
         for(Process e : processes){
             if(!e.getProcessControlBlock().getProcessState().equals(ProcessState.FINISHED)){
-                e.getProcessControlBlock().setProcessState(ProcessState.FINISHED);
                 return false;
             }
         }
