@@ -28,11 +28,34 @@ public class Interpreter {
         }else if(e.getInstruction().contains("readFile")){
             readFile(e, instructionData[1]);
         }else if(e.getInstruction().contains("writeFile")){
-            //TODO
+            String fileName = "";
+            String data = "";
+            if(Scheduler.getCurrentRunningProcess().getVar1().getVariableName().equals(instructionData[1])){
+                fileName = Scheduler.getCurrentRunningProcess().getVar1().getData().toString();
+            }else if(Scheduler.getCurrentRunningProcess().getVar2().getVariableName().equals(instructionData[1])){
+                fileName = Scheduler.getCurrentRunningProcess().getVar2().getData().toString();
+            }else if(Scheduler.getCurrentRunningProcess().getVar3().getVariableName().equals(instructionData[1])){
+                fileName = Scheduler.getCurrentRunningProcess().getVar3().getData().toString();
+            }
+
+            if(Scheduler.getCurrentRunningProcess().getVar1().getVariableName().equals(instructionData[2])){
+                data = Scheduler.getCurrentRunningProcess().getVar1().getData().toString();
+            }else if(Scheduler.getCurrentRunningProcess().getVar2().getVariableName().equals(instructionData[2])){
+                data = Scheduler.getCurrentRunningProcess().getVar2().getData().toString();
+            }else if(Scheduler.getCurrentRunningProcess().getVar3().getVariableName().equals(instructionData[2])){
+                data = Scheduler.getCurrentRunningProcess().getVar3().getData().toString();
+            }
+            writeFile(fileName, data);
         }else if(e.getInstruction().contains("printFromTo")){
             printFromTo(Integer.parseInt(instructionData[1]), Integer.parseInt(instructionData[2]));
         }else if(e.getInstruction().contains("print")){
-            //TODO
+            if(Scheduler.getCurrentRunningProcess().getVar1().getVariableName().equals(instructionData[1])){
+                print(Scheduler.getCurrentRunningProcess().getVar1().getData().toString());
+            }else if(Scheduler.getCurrentRunningProcess().getVar2().getVariableName().equals(instructionData[1])){
+                print(Scheduler.getCurrentRunningProcess().getVar2().getData().toString());
+            }else if(Scheduler.getCurrentRunningProcess().getVar3().getVariableName().equals(instructionData[1])){
+                print(Scheduler.getCurrentRunningProcess().getVar3().getData().toString());
+            }
         }
 
         Scheduler.getCurrentRunningProcess().currentTimeSlice--;
