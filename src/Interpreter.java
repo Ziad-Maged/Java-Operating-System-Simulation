@@ -5,17 +5,33 @@ import java.util.Scanner;
 public class Interpreter {
 
     public static void parseCode(Instruction e){
+        String[] instructionData = e.getInstruction().split(" ");
         if(e.getInstruction().contains("assign")){
-            //TODO
+            if(e.isDependent()){
+                int indexOfPreviousInstruction = 0;
+                for(int i = 0; i < Kernel.memory.length; i++){
+                    if(Kernel.memory[i] instanceof Instruction && Kernel.memory[i].equals(e)){
+                        indexOfPreviousInstruction = i - 1;
+                    }
+                }
+                String wholeIns = e.getInstruction() + " " + ((Instruction)Kernel.memory[indexOfPreviousInstruction]).getResult();
+                assign(wholeIns);
+            }else {
+                assign(e.getInstruction());
+            }
         }else if(e.getInstruction().contains("semWait")){
-            //TODO
+            semWait(instructionData[1]);
         }else if(e.getInstruction().contains("semSignal")){
-            //TODO
+            semSignal(instructionData[1]);
         }else if(e.getInstruction().contains("input")){
-            //TODO
+            input(e);
         }else if(e.getInstruction().contains("readFile")){
-            //TODO
+            readFile(e, instructionData[1]);
         }else if(e.getInstruction().contains("writeFile")){
+            //TODO
+        }else if(e.getInstruction().contains("printFromTo")){
+            printFromTo(Integer.parseInt(instructionData[1]), Integer.parseInt(instructionData[2]));
+        }else if(e.getInstruction().contains("print")){
             //TODO
         }
 
@@ -92,16 +108,16 @@ public class Interpreter {
     public static void writeFile(String fileName, String data) {
         //TODO LATER
         try{
-            BufferedWriter br = new BufferedWriter(new FileWriter(fileName));
+            BufferedWriter br = new BufferedWriter(new FileWriter(fileName + ".txt"));
             br.write(data);
             br.close();
         }catch(IOException ignored){}
     }
 
-    public void readFile(Instruction e, String fileName) throws IOException{
+    public static void readFile(Instruction e, String fileName){
         //TODO LATER
         try{
-            BufferedReader br = new BufferedReader(new FileReader(fileName));
+            BufferedReader br = new BufferedReader(new FileReader(fileName + ".txt"));
             String line = br.readLine();
             e.setResult(line);
             ArrayList<String>content = new ArrayList<>();
