@@ -67,8 +67,8 @@ public class Kernel {
                     p = processToSwap(i);
                 }
                 assert p != null;
-                disk.getProcessesOnDisk().add(p);
                 p.setInDisk(true);
+                disk.getProcessesOnDisk().add(p);
                 disk.saveDisk();
                 disk.write();
             }
