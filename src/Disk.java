@@ -1,13 +1,16 @@
 import java.io.*;
-import java.sql.Array;
 import java.util.ArrayList;
 
 public class Disk implements Serializable {
 
-    ArrayList<Process> processesOnDisk;
+    private final ArrayList<Process> processesOnDisk;
 
     public Disk(){
         processesOnDisk = new ArrayList<>();
+    }
+
+    public ArrayList<Process> getProcessesOnDisk() {
+        return processesOnDisk;
     }
 
     public void saveDisk(){

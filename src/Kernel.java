@@ -15,6 +15,7 @@ public class Kernel {
     static Semaphore userOutputMutex = new Semaphore(1);
     static ArrayList<Process> processes = new ArrayList<>();
     static ArrayList<Integer> processPCBIndices = new ArrayList<>();
+    static Disk disk = new Disk();
     public static void startProgram(){
         //TODO Later
     }
