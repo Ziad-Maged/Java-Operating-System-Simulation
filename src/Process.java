@@ -8,7 +8,7 @@ public class Process implements Serializable {
     private int currentExecutionTime;
     private boolean inDisk;
     private final int requiredSizeInMemory;
-    private int currentTimeSlice;
+    public int currentTimeSlice;
     private Variable var1;
     private Variable var2;
     private Variable var3;

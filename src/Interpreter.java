@@ -1,9 +1,25 @@
+import java.io.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Interpreter {
 
     public static void parseCode(Instruction e){
-        //TODO LATER
+        if(e.getInstruction().contains("assign")){
+            //TODO
+        }else if(e.getInstruction().contains("semWait")){
+            //TODO
+        }else if(e.getInstruction().contains("semSignal")){
+            //TODO
+        }else if(e.getInstruction().contains("input")){
+            //TODO
+        }else if(e.getInstruction().contains("readFile")){
+            //TODO
+        }else if(e.getInstruction().contains("writeFile")){
+            //TODO
+        }
+
+        Scheduler.getCurrentRunningProcess().currentTimeSlice--;
     }
 
     public static void print(String message){
@@ -25,7 +41,15 @@ public class Interpreter {
     }
 
     public static void assign(String code){
-        //TODO
+        String[] data = code.split(" ");
+        Variable var = new Variable(data[1], data[2]);
+        if(Scheduler.getCurrentRunningProcess().getVar1().getVariableName().equals("null")){
+            Scheduler.getCurrentRunningProcess().setVar1(var);
+        }else if(Scheduler.getCurrentRunningProcess().getVar2().getVariableName().equals("null")){
+            Scheduler.getCurrentRunningProcess().setVar2(var);
+        }else if(Scheduler.getCurrentRunningProcess().getVar3().getVariableName().equals("null")){
+            Scheduler.getCurrentRunningProcess().setVar3(var);
+        }
     }
 
     public static void semWait(String resourceType){
@@ -65,12 +89,29 @@ public class Interpreter {
         }
     }
 
-    public static void writeFile(String fileName, String data){
+    public static void writeFile(String fileName, String data) {
         //TODO LATER
+        try{
+            BufferedWriter br = new BufferedWriter(new FileWriter(fileName));
+            br.write(data);
+            br.close();
+        }catch(IOException ignored){}
     }
 
-    public static void readFile(Instruction e, String fileName){
+    public void readFile(Instruction e, String fileName) throws IOException{
         //TODO LATER
+        try{
+            BufferedReader br = new BufferedReader(new FileReader(fileName));
+            String line = br.readLine();
+            e.setResult(line);
+            ArrayList<String>content = new ArrayList<>();
+            while(line!=null){
+                content.add(line);
+                line = br.readLine();
+                e.setResult(e.getResult() + " " + line);
+            }
+            br.close();
+        }catch(IOException ignored){}
     }
 
 }
