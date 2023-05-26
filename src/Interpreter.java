@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 public class Interpreter {
 
     public static void parseCode(Instruction e){
@@ -17,7 +19,9 @@ public class Interpreter {
     }
 
     public static void input(Instruction e){
-        //TODO
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Please enter a value: ");
+        e.setResult(sc.nextLine());
     }
 
     public static void assign(String code){
