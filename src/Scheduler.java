@@ -45,6 +45,7 @@ public class Scheduler {
     public static void reschedule(){
         if(currentRunningProcess == null){
             currentRunningProcess = readyQueue.remove();
+            currentRunningProcess.currentTimeSlice = 2;
             currentRunningProcess.getProcessControlBlock().setProcessState(ProcessState.RUNNING);
         }else{
             if(!currentRunningProcess.getProcessControlBlock().getProcessState().equals(ProcessState.BLOCKED)){
@@ -52,6 +53,7 @@ public class Scheduler {
                 currentRunningProcess.getProcessControlBlock().setProcessState(ProcessState.READY);
             }
             currentRunningProcess = readyQueue.remove();
+            currentRunningProcess.currentTimeSlice = 2;
             currentRunningProcess.getProcessControlBlock().setProcessState(ProcessState.RUNNING);
         }
     }

@@ -29,6 +29,24 @@ public class Kernel {
             if(time == 4){
                 Kernel.allocateProcessToMemory(3);
             }
+            p = Scheduler.getCurrentRunningProcess();
+            int c =0;
+            for(int i = 0; i < memory.length; i++){
+                if(memory[i] instanceof Integer && ((Integer)memory[i]) == p.getProcessControlBlock().getProcessID()){
+                   c  = i;
+                    break;
+                }
+            }
+            int indexOfProgramCounter = c + 2;
+            for(int j = c+8 ; j < (c+ 8 + p.getInstructions().size()); j++){
+                if(memory[j] instanceof Instruction){
+                    Interpreter.parseCode((Instruction) memory[j]);
+                }
+                if(Scheduler.getCurrentRunningProcess().currentTimeSlice == 0){
+                    Scheduler.reschedule();
+
+                }
+            }
             if(isDone()){
                 running = false;
             }
@@ -45,6 +63,8 @@ public class Kernel {
         }
         return true;
     }
+
+
 
     public static void allocateProcessToMemory(int processID){
         try {

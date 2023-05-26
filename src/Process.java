@@ -20,7 +20,7 @@ public class Process implements Serializable {
         this.totalExecutionTime = totalExecutionTime;
         this.requiredSizeInMemory = requiredSizeInMemory;
         this.currentExecutionTime = 0;
-        this.currentTimeSlice = 0;
+        this.currentTimeSlice = 2;
         this.inDisk = false;
         instructions = new ArrayList<>();
     }

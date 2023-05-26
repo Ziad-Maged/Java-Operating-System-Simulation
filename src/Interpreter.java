@@ -59,6 +59,7 @@ public class Interpreter {
         }
 
         Scheduler.getCurrentRunningProcess().currentTimeSlice--;
+        Scheduler.getCurrentRunningProcess().setCurrentExecutionTime(Scheduler.getCurrentRunningProcess().getCurrentExecutionTime() + 1);
     }
 
     public static void print(String message){
@@ -96,16 +97,19 @@ public class Interpreter {
             case "file" ->{
                 if(!Kernel.fileMutex.tryAcquire()){
                     Scheduler.blockCurrentProcessOnResource("file");
+                    Scheduler.getCurrentRunningProcess().setCurrentTimeSlice(0);
                 }
             }
             case "userInput" ->{
                 if(!Kernel.userInputMutex.tryAcquire()){
                     Scheduler.blockCurrentProcessOnResource("userInput");
+                    Scheduler.getCurrentRunningProcess().setCurrentTimeSlice(0);
                 }
             }
             case "userOutput" ->{
                 if(!Kernel.userOutputMutex.tryAcquire()){
                     Scheduler.blockCurrentProcessOnResource("userOutput");
+                    Scheduler.getCurrentRunningProcess().setCurrentTimeSlice(0);
                 }
             }
         }
