@@ -16,6 +16,10 @@ public class Interpreter {
         System.out.println(b + " ]");
     }
 
+    public static void input(Instruction e){
+        //TODO
+    }
+
     public static void assign(String code){
         //TODO
     }
