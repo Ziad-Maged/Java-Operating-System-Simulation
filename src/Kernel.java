@@ -62,9 +62,19 @@ public class Kernel {
                 process.setVar3((Variable) memory[pcbPlaceholder - 1]);
                 currentMemorySpace--;
             }else {
-                int remainingMemory = currentMemorySpace;
+                for(int i = 0; i < pcbPlaceholder; i += 8){
+
+                }
             }
         } catch (IOException ignored) {}
+    }
+
+    private static Process processToSwap(int processID){
+        for(Process e : processes){
+            if(e.getProcessControlBlock().getProcessID() == processID && !e.getProcessControlBlock().getProcessState().equals(ProcessState.RUNNING))
+                return e;
+        }
+        return null;
     }
 
     private static void memoryToDisk(){
