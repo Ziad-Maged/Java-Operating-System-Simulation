@@ -1,4 +1,5 @@
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class Process implements Serializable {
     private final String processName;
@@ -11,6 +12,7 @@ public class Process implements Serializable {
     private Variable var1;
     private Variable var2;
     private Variable var3;
+    private final ArrayList<Instruction> instructions;
 
     public Process(String processName, PCB processControlBlock, int totalExecutionTime, int requiredSizeInMemory) {
         this.processName = processName;
@@ -20,6 +22,7 @@ public class Process implements Serializable {
         this.currentExecutionTime = 0;
         this.currentTimeSlice = 0;
         this.inDisk = false;
+        instructions = new ArrayList<>();
     }
 
     public String getProcessName() {
@@ -84,5 +87,9 @@ public class Process implements Serializable {
 
     public void setVar3(Variable var3) {
         this.var3 = var3;
+    }
+
+    public ArrayList<Instruction> getInstructions() {
+        return instructions;
     }
 }

@@ -59,7 +59,7 @@ public class Kernel {
                 process.setVar3((Variable) memory[pcbPlaceholder - 1]);
                 currentMemorySpace--;
             }else {
-                //TODO SWAPPING
+                int remainingMemory = currentMemorySpace;
             }
         } catch (IOException ignored) {}
     }
