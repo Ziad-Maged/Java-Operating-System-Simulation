@@ -16,12 +16,39 @@ public class Kernel {
     static ArrayList<Process> processes = new ArrayList<>();
     static Disk disk = new Disk();
     public static void startProgram(){
-        //TODO Later
+        boolean running = true;
+        int time = 0;
+        while(running){
+            if(time == 0){
+                Kernel.allocateProcessToMemory(1);
+            }
+            if(time == 1){
+                Kernel.allocateProcessToMemory(2);
+            }
+            if(time == 2){
+                Kernel.allocateProcessToMemory(3);
+            }
+            if(isDone()){
+                running = false;
+            }
+            time++;
+        }
+        System.out.println(Arrays.deepToString(memory));
+    }
+
+    private static boolean isDone(){
+        for(Process e : processes){
+            if(!e.getProcessControlBlock().getProcessState().equals(ProcessState.FINISHED)){
+                e.getProcessControlBlock().setProcessState(ProcessState.FINISHED);
+                return false;
+            }
+        }
+        return true;
     }
 
     public static void allocateProcessToMemory(int processID){
         try {
-            BufferedReader br = new BufferedReader(new FileReader("Program_" + processID));
+            BufferedReader br = new BufferedReader(new FileReader("Program_" + processID + ".txt"));
             ArrayList<Instruction> instructions = new ArrayList<>();
             while (br.ready()){
                 String s = br.readLine();
@@ -51,13 +78,17 @@ public class Kernel {
                     currentMemorySpace--;
                 }
                 Process process = new Process("Program_" + processID, pcb, instructions.size(), instructions.size() + 8);
+                for(Instruction e : instructions)
+                    process.getInstructions().add(e);
                 process.getProcessControlBlock().setProcessState(ProcessState.READY);
                 Scheduler.getReadyQueue().add(process);
                 processes.add(process);
             }else {
                 Process p = null;
-                for(int i = 0; i < placeholder; i += 8){
-                    p = processToSwap(i);
+                for(int i = 0; i < placeholder; i += 8 + instructions.size()){
+                    p = processToSwap((Integer)memory[i]);
+                    if(p != null)
+                        break;
                 }
                 assert p != null;
                 p.setInDisk(true);

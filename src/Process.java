@@ -92,4 +92,8 @@ public class Process implements Serializable {
     public ArrayList<Instruction> getInstructions() {
         return instructions;
     }
+
+    public String toString(){
+        return "";
+    }
 }
