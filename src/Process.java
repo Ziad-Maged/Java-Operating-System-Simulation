@@ -8,6 +8,9 @@ public class Process implements Serializable {
     private boolean inDisk;
     private final int requiredSizeInMemory;
     private int currentTimeSlice;
+    private Variable var1;
+    private Variable va2;
+    private Variable var3;
 
     public Process(String processName, PCB processControlBlock, int totalExecutionTime, int requiredSizeInMemory) {
         this.processName = processName;
@@ -57,5 +60,29 @@ public class Process implements Serializable {
 
     public void setCurrentTimeSlice(int currentTimeSlice) {
         this.currentTimeSlice = currentTimeSlice;
+    }
+
+    public Variable getVar1() {
+        return var1;
+    }
+
+    public void setVar1(Variable var1) {
+        this.var1 = var1;
+    }
+
+    public Variable getVa2() {
+        return va2;
+    }
+
+    public void setVa2(Variable va2) {
+        this.va2 = va2;
+    }
+
+    public Variable getVar3() {
+        return var3;
+    }
+
+    public void setVar3(Variable var3) {
+        this.var3 = var3;
     }
 }
