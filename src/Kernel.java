@@ -62,9 +62,15 @@ public class Kernel {
                 process.setVar3((Variable) memory[pcbPlaceholder - 1]);
                 currentMemorySpace--;
             }else {
+                Process p = null;
                 for(int i = 0; i < pcbPlaceholder; i += 8){
-
+                    p = processToSwap(i);
                 }
+                assert p != null;
+                disk.getProcessesOnDisk().add(p);
+                p.setInDisk(true);
+                disk.saveDisk();
+                disk.write();
             }
         } catch (IOException ignored) {}
     }
@@ -75,6 +81,14 @@ public class Kernel {
                 return e;
         }
         return null;
+    }
+
+    private static void removeProcessFromMemory(Process p){
+        for(int i = 0; i < memory.length; i++){
+            if(memory[i] instanceof Integer && ((Integer)memory[i]) == p.getProcessControlBlock().getProcessID()){
+                pcbPlaceholder = i;
+            }
+        }
     }
 
     private static void memoryToDisk(){
