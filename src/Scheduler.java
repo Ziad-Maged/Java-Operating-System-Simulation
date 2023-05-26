@@ -46,6 +46,7 @@ public class Scheduler {
         if(currentRunningProcess.getCurrentTimeSlice() >= quantum){
             if(!currentRunningProcess.getProcessControlBlock().getProcessState().equals(ProcessState.BLOCKED)){
                 readyQueue.add(currentRunningProcess);
+                currentRunningProcess.getProcessControlBlock().setProcessState(ProcessState.READY);
             }
             currentRunningProcess = readyQueue.remove();
             currentRunningProcess.getProcessControlBlock().setProcessState(ProcessState.RUNNING);
