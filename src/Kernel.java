@@ -50,6 +50,10 @@ public class Kernel {
                     memory[placeholder++] = e;
                     currentMemorySpace--;
                 }
+                Process process = new Process("Program_" + processID, pcb, instructions.size(), instructions.size() + 8);
+                process.getProcessControlBlock().setProcessState(ProcessState.READY);
+                Scheduler.getReadyQueue().add(process);
+                processes.add(process);
             }else {
                 Process p = null;
                 for(int i = 0; i < placeholder; i += 8){
