@@ -9,9 +9,9 @@ public class Process implements Serializable {
     private boolean inDisk;
     private final int requiredSizeInMemory;
     public int currentTimeSlice;
-    private Variable var1;
-    private Variable var2;
-    private Variable var3;
+    private Variable var1 = new Variable();
+    private Variable var2 = new Variable();
+    private Variable var3 = new Variable();
     private final ArrayList<Instruction> instructions;
 
     public Process(String processName, PCB processControlBlock, int totalExecutionTime, int requiredSizeInMemory) {

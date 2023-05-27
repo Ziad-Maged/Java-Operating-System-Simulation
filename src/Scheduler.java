@@ -40,6 +40,11 @@ public class Scheduler {
             }
         }
         generalBlockedQueue.add(currentRunningProcess);
+        System.out.println("Ready Queue: " + readyQueue);
+        System.out.println("General Blocked Queue: " + generalBlockedQueue);
+        System.out.println("File Blocked Queue: " + fileBlockedQueue);
+        System.out.println("UserInput Blocked Queue: " + userInputBlockedQueue);
+        System.out.println("UserOutput Blocked Queue: " + userOutputBlockedQueue);
     }
 
     public static void reschedule(){
@@ -56,6 +61,11 @@ public class Scheduler {
             currentRunningProcess.currentTimeSlice = 2;
             currentRunningProcess.getProcessControlBlock().setProcessState(ProcessState.RUNNING);
         }
+        System.out.println("Ready Queue: " + readyQueue);
+        System.out.println("General Blocked Queue: " + generalBlockedQueue);
+        System.out.println("File Blocked Queue: " + fileBlockedQueue);
+        System.out.println("UserInput Blocked Queue: " + userInputBlockedQueue);
+        System.out.println("UserOutput Blocked Queue: " + userOutputBlockedQueue);
     }
 
     public static void unblockProcessOnResource(String resourceType){

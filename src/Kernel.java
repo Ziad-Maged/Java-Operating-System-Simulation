@@ -29,6 +29,9 @@ public class Kernel {
             if(time == 4){
                 Kernel.allocateProcessToMemory(3);
             }
+            processes.get(0).getProcessControlBlock().setProcessState(ProcessState.FINISHED);
+            if(time == 0)
+                Scheduler.reschedule();
             p = Scheduler.getCurrentRunningProcess();
             int c =0;
             for(int i = 0; i < memory.length; i++){
@@ -38,19 +41,29 @@ public class Kernel {
                 }
             }
             int indexOfProgramCounter = c + 2;
-            for(int j = c+8 ; j < (c+ 8 + p.getInstructions().size()); j++){
+            for(int j = (Integer)memory[indexOfProgramCounter] ; j < (c+ 8 + p.getInstructions().size()); j++){
+                memory[indexOfProgramCounter] = j;
                 if(memory[j] instanceof Instruction){
+                    System.out.println("Instruction currently Executing: " + memory[j]);
                     Interpreter.parseCode((Instruction) memory[j]);
+                    time++;
                 }
-                if(Scheduler.getCurrentRunningProcess().currentTimeSlice == 0){
+                if(Scheduler.getCurrentRunningProcess().currentTimeSlice == 0 || Scheduler.getCurrentRunningProcess().getCurrentExecutionTime() == Scheduler.getCurrentRunningProcess().getTotalExecutionTime()){
+                    if(Scheduler.getCurrentRunningProcess().getCurrentExecutionTime() == Scheduler.getCurrentRunningProcess().getTotalExecutionTime()){
+                        Scheduler.getCurrentRunningProcess().getProcessControlBlock().setProcessState(ProcessState.FINISHED);
+                        for (Process e : processes){
+                            if(e.getProcessControlBlock().getProcessID() == Scheduler.getCurrentRunningProcess().getProcessControlBlock().getProcessID()){
+                                e.getProcessControlBlock().setProcessState(ProcessState.FINISHED);
+                            }
+                        }
+                    }
                     Scheduler.reschedule();
-
+                    break;
                 }
             }
             if(isDone()){
                 running = false;
             }
-            time++;
         }
         System.out.println(Arrays.deepToString(memory));
     }
