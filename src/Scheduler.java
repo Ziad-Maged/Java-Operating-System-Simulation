@@ -48,19 +48,15 @@ public class Scheduler {
     }
 
     public static void reschedule(){
-        if(currentRunningProcess == null){
-            currentRunningProcess = readyQueue.remove();
-            currentRunningProcess.currentTimeSlice = 2;
-            currentRunningProcess.getProcessControlBlock().setProcessState(ProcessState.RUNNING);
-        }else{
-            if(!currentRunningProcess.getProcessControlBlock().getProcessState().equals(ProcessState.BLOCKED)){
+        if (currentRunningProcess != null) {
+            if (!currentRunningProcess.getProcessControlBlock().getProcessState().equals(ProcessState.BLOCKED)) {
                 readyQueue.add(currentRunningProcess);
                 currentRunningProcess.getProcessControlBlock().setProcessState(ProcessState.READY);
             }
-            currentRunningProcess = readyQueue.remove();
-            currentRunningProcess.currentTimeSlice = 2;
-            currentRunningProcess.getProcessControlBlock().setProcessState(ProcessState.RUNNING);
         }
+        currentRunningProcess = readyQueue.remove();
+        currentRunningProcess.currentTimeSlice = 2;
+        currentRunningProcess.getProcessControlBlock().setProcessState(ProcessState.RUNNING);
         System.out.println("Ready Queue: " + readyQueue);
         System.out.println("General Blocked Queue: " + generalBlockedQueue);
         System.out.println("File Blocked Queue: " + fileBlockedQueue);
