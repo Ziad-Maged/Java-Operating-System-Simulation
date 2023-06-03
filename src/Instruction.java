@@ -2,7 +2,7 @@ import java.io.Serializable;
 
 public class Instruction implements Serializable {
     private final String instruction;
-    private boolean dependent;
+    private final boolean dependent;
     private Object result;
 
     public Instruction(String instruction, boolean dependent){
@@ -20,10 +20,6 @@ public class Instruction implements Serializable {
 
     public Object getResult() {
         return result;
-    }
-
-    public void setDependent(boolean dependent) {
-        this.dependent = dependent;
     }
 
     public void setResult(Object result) {

@@ -2,8 +2,8 @@ import java.io.Serializable;
 
 public class Variable implements Serializable {
 
-    private String variableName;
-    private Object data;
+    private final String variableName;
+    private final Object data;
 
     public Variable(String variableName, Object data) {
         this.variableName = variableName;
@@ -19,19 +19,11 @@ public class Variable implements Serializable {
         return variableName;
     }
 
-    public void setVariableName(String variableName) {
-        this.variableName = variableName;
-    }
-
     public Object getData() {
         return data;
     }
 
-    public void setData(Object data) {
-        this.data = data;
-    }
-
     public String toString(){
-        return "variableName=" + variableName + " data=" + (( data!=null )? data.toString():"null");
+        return variableName + " = " + (( data!=null )? data.toString():"null");
     }
 }

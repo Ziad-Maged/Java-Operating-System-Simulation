@@ -94,7 +94,11 @@ public class Process implements Serializable {
     }
 
     public  String toString(){
-        return "Process Name: " + processName + "\n" + "Process Control Block: " + processControlBlock +"\n"+ "Total Excution Time: "+ totalExecutionTime + "\n"
+        return "Process Name: " + processName + "\n" + "Process Control Block: " + processControlBlock +"\n"+ "Total Execution Time: "+ totalExecutionTime + "\n"
                 + "Current Execution Time: "+ currentExecutionTime + "\n" + "Size in Memory: "+requiredSizeInMemory +"\n" + "Time Slice: " + currentTimeSlice;
+    }
+
+    public boolean equals(Process process){
+        return processControlBlock.equals(process.getProcessControlBlock());
     }
 }

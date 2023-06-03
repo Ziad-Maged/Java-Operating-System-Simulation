@@ -17,7 +17,7 @@ public class PCB implements Serializable {
     }
 
     public PCB(int processID, int programCounter, int minimumInMemory, int maximumInMemory){
-        this(processID, ProcessState.NEW, programCounter, minimumInMemory, maximumInMemory);
+        this(processID, ProcessState.READY, programCounter, minimumInMemory, maximumInMemory);
     }
 
     public PCB(int processID, int minimumInMemory, int maximumInMemory){
@@ -63,5 +63,9 @@ public class PCB implements Serializable {
     public String toString(){
         return "processID=" + processID + " processState=" + processState + " PC=" + programCounter
                 + " minimumInMemory=" + minimumInMemory + " maximumInMemory=" + maximumInMemory;
+    }
+
+    public boolean equals(PCB pcb){
+        return processID == pcb.getProcessID();
     }
 }

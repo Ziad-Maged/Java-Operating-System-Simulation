@@ -22,46 +22,101 @@ public class Scheduler {
         return currentRunningProcess;
     }
 
-    public static void setCurrentRunningProcess(Process currentRunningProcess) {
-        Scheduler.currentRunningProcess = currentRunningProcess;
-    }
-
     public static void blockCurrentProcessOnResource(String resourceType){
         currentRunningProcess.getProcessControlBlock().setProcessState(ProcessState.BLOCKED);
         switch (resourceType){
-            case "file" ->{
+            case "file" ->
                 fileBlockedQueue.add(currentRunningProcess);
-            }
-            case "userInput" ->{
+            case "userInput" ->
                 userInputBlockedQueue.add(currentRunningProcess);
-            }
-            case "userOutput" ->{
+            case "userOutput" ->
                 userOutputBlockedQueue.add(currentRunningProcess);
-            }
         }
         generalBlockedQueue.add(currentRunningProcess);
-        System.out.println("Ready Queue: " + readyQueue);
-        System.out.println("General Blocked Queue: " + generalBlockedQueue);
-        System.out.println("File Blocked Queue: " + fileBlockedQueue);
-        System.out.println("UserInput Blocked Queue: " + userInputBlockedQueue);
-        System.out.println("UserOutput Blocked Queue: " + userOutputBlockedQueue);
+        Kernel.blockCurrentProcess();
     }
 
     public static void reschedule(){
         if (currentRunningProcess != null) {
-            if (!currentRunningProcess.getProcessControlBlock().getProcessState().equals(ProcessState.BLOCKED)) {
+            if(currentRunningProcess.getCurrentExecutionTime() >= currentRunningProcess.getTotalExecutionTime()){
+                currentRunningProcess.getProcessControlBlock().setProcessState(ProcessState.FINISHED);
+                Kernel.finishCurrentProcess();
+                if(readyQueue.isEmpty())
+                    return;
+            }
+            if (!currentRunningProcess.getProcessControlBlock().getProcessState().equals(ProcessState.BLOCKED) && !currentRunningProcess.getProcessControlBlock().getProcessState().equals(ProcessState.FINISHED)) {
                 readyQueue.add(currentRunningProcess);
                 currentRunningProcess.getProcessControlBlock().setProcessState(ProcessState.READY);
+                for(int i = 0; i < Kernel.memory.length; i++){
+                    if(Kernel.memory[i] instanceof Integer && Kernel.memory[i + 1] instanceof ProcessState && (Integer)Kernel.memory[i] == currentRunningProcess.getProcessControlBlock().getProcessID()){
+                        Kernel.memory[i + 1] = ProcessState.READY;
+                        break;
+                    }
+                }
             }
         }
         currentRunningProcess = readyQueue.remove();
-        currentRunningProcess.currentTimeSlice = 2;
+        currentRunningProcess.currentTimeSlice = 0;
         currentRunningProcess.getProcessControlBlock().setProcessState(ProcessState.RUNNING);
+        for(Process e : Kernel.processes){
+            if(e.getProcessControlBlock().getProcessID() == currentRunningProcess.getProcessControlBlock().getProcessID()){
+                e.getProcessControlBlock().setProcessState(ProcessState.RUNNING);
+                break;
+            }
+        }
+        if(currentRunningProcess.isInDisk()){
+            currentRunningProcess.setInDisk(false);
+            Kernel.swapForCurrentProcess();
+        }
         System.out.println("Ready Queue: " + readyQueue);
         System.out.println("General Blocked Queue: " + generalBlockedQueue);
         System.out.println("File Blocked Queue: " + fileBlockedQueue);
         System.out.println("UserInput Blocked Queue: " + userInputBlockedQueue);
         System.out.println("UserOutput Blocked Queue: " + userOutputBlockedQueue);
+        System.out.println();
+    }
+
+    public static void updateProcessContent(Process e){
+        for(Process p : readyQueue){
+            if(p.getProcessControlBlock().getProcessID() == e.getProcessControlBlock().getProcessID()){
+                p.getProcessControlBlock().setProgramCounter(e.getProcessControlBlock().getProgramCounter());
+                p.getProcessControlBlock().setMinimumInMemory(e.getProcessControlBlock().getMinimumInMemory());
+                p.getProcessControlBlock().setMaximumInMemory(e.getProcessControlBlock().getMaximumInMemory());
+                return;
+            }
+        }
+        for(Process p : generalBlockedQueue){
+            if(p.getProcessControlBlock().getProcessID() == e.getProcessControlBlock().getProcessID()){
+                p.getProcessControlBlock().setProgramCounter(e.getProcessControlBlock().getProgramCounter());
+                p.getProcessControlBlock().setMinimumInMemory(e.getProcessControlBlock().getMinimumInMemory());
+                p.getProcessControlBlock().setMaximumInMemory(e.getProcessControlBlock().getMaximumInMemory());
+                break;
+            }
+        }
+        for(Process p : fileBlockedQueue){
+            if(p.getProcessControlBlock().getProcessID() == e.getProcessControlBlock().getProcessID()){
+                p.getProcessControlBlock().setProgramCounter(e.getProcessControlBlock().getProgramCounter());
+                p.getProcessControlBlock().setMinimumInMemory(e.getProcessControlBlock().getMinimumInMemory());
+                p.getProcessControlBlock().setMaximumInMemory(e.getProcessControlBlock().getMaximumInMemory());
+                return;
+            }
+        }
+        for(Process p : userInputBlockedQueue){
+            if(p.getProcessControlBlock().getProcessID() == e.getProcessControlBlock().getProcessID()){
+                p.getProcessControlBlock().setProgramCounter(e.getProcessControlBlock().getProgramCounter());
+                p.getProcessControlBlock().setMinimumInMemory(e.getProcessControlBlock().getMinimumInMemory());
+                p.getProcessControlBlock().setMaximumInMemory(e.getProcessControlBlock().getMaximumInMemory());
+                return;
+            }
+        }
+        for(Process p : userOutputBlockedQueue){
+            if(p.getProcessControlBlock().getProcessID() == e.getProcessControlBlock().getProcessID()){
+                p.getProcessControlBlock().setProgramCounter(e.getProcessControlBlock().getProgramCounter());
+                p.getProcessControlBlock().setMinimumInMemory(e.getProcessControlBlock().getMinimumInMemory());
+                p.getProcessControlBlock().setMaximumInMemory(e.getProcessControlBlock().getMaximumInMemory());
+                return;
+            }
+        }
     }
 
     public static void unblockProcessOnResource(String resourceType){
@@ -89,6 +144,39 @@ public class Scheduler {
             }
             temp.getProcessControlBlock().setProcessState(ProcessState.READY);
             readyQueue.add(temp);
+        }
+    }
+
+    public static void updateProcessToDisk(Process p){
+        for(Process e : readyQueue){
+            if(e.equals(p)){
+                e.setInDisk(true);
+                return;
+            }
+        }
+        for(Process e : generalBlockedQueue){
+            if(e.equals(p)){
+                e.setInDisk(true);
+                break;
+            }
+        }
+        for(Process e : fileBlockedQueue){
+            if(e.equals(p)){
+                e.setInDisk(true);
+                return;
+            }
+        }
+        for(Process e : userInputBlockedQueue){
+            if(e.equals(p)){
+                e.setInDisk(true);
+                return;
+            }
+        }
+        for(Process e : userOutputBlockedQueue){
+            if(e.equals(p)){
+                e.setInDisk(true);
+                return;
+            }
         }
     }
 }

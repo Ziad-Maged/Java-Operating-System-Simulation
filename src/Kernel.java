@@ -3,6 +3,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Scanner;
 import java.util.concurrent.Semaphore;
 
 public class Kernel {
@@ -16,56 +17,122 @@ public class Kernel {
     static ArrayList<Process> processes = new ArrayList<>();
     static Disk disk = new Disk();
     public static void startProgram(){
-        boolean running = true;
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter Process 1 Arrival Time: ");
+        int processOneArrivalTime = sc.nextInt();
+        System.out.print("Enter Process 2 Arrival Time: ");
+        int processTwoArrivalTime = sc.nextInt();
+        System.out.print("Enter Process 3 Arrival Time: ");
+        int processThreeArrivalTime = sc.nextInt();
         int time = 0;
-        Process p;
-        while(running){
-            if(time == 0){
+        Process p = null;
+        int indexOfProgramCounter = 0;
+        while(true){
+            if(time == processOneArrivalTime){
                 Kernel.allocateProcessToMemory(1);
             }
-            if(time == 1){
+            if(time == processTwoArrivalTime){
                 Kernel.allocateProcessToMemory(2);
             }
-            if(time == 4){
+            if(time == processThreeArrivalTime){
                 Kernel.allocateProcessToMemory(3);
             }
-            processes.get(0).getProcessControlBlock().setProcessState(ProcessState.FINISHED);
-            if(time == 0)
+            if(Scheduler.getCurrentRunningProcess() == null || Scheduler.getCurrentRunningProcess().getCurrentTimeSlice() >= Scheduler.getQuantum() || memory[indexOfProgramCounter - 1].equals(ProcessState.BLOCKED) || Scheduler.getCurrentRunningProcess().getProcessControlBlock().getProgramCounter() > Scheduler.getCurrentRunningProcess().getProcessControlBlock().getMaximumInMemory()){
                 Scheduler.reschedule();
-            p = Scheduler.getCurrentRunningProcess();
-            int c =0;
-            for(int i = 0; i < memory.length; i++){
-                if(memory[i] instanceof Integer && ((Integer)memory[i]) == p.getProcessControlBlock().getProcessID()){
-                   c  = i;
+                if(isDone()){
                     break;
                 }
-            }
-            int indexOfProgramCounter = c + 2;
-            for(int j = (Integer)memory[indexOfProgramCounter] ; j < (c+ 8 + p.getInstructions().size()); j++){
-                memory[indexOfProgramCounter] = j;
-                if(memory[j] instanceof Instruction){
-                    System.out.println("Instruction currently Executing: " + memory[j]);
-                    Interpreter.parseCode((Instruction) memory[j]);
-                    time++;
-                }
-                if(Scheduler.getCurrentRunningProcess().currentTimeSlice == 0 || Scheduler.getCurrentRunningProcess().getCurrentExecutionTime() == Scheduler.getCurrentRunningProcess().getTotalExecutionTime()){
-                    if(Scheduler.getCurrentRunningProcess().getCurrentExecutionTime() == Scheduler.getCurrentRunningProcess().getTotalExecutionTime()){
-                        Scheduler.getCurrentRunningProcess().getProcessControlBlock().setProcessState(ProcessState.FINISHED);
-                        for (Process e : processes){
-                            if(e.getProcessControlBlock().getProcessID() == Scheduler.getCurrentRunningProcess().getProcessControlBlock().getProcessID()){
-                                e.getProcessControlBlock().setProcessState(ProcessState.FINISHED);
-                            }
-                        }
+                p = Scheduler.getCurrentRunningProcess();
+                int c =0;
+                for(int i = 0; i < memory.length; i++){
+                    if(memory[i] instanceof Integer && ((Integer)memory[i]) == p.getProcessControlBlock().getProcessID()){
+                        c  = i;
+                        break;
                     }
-                    Scheduler.reschedule();
-                    break;
                 }
+                indexOfProgramCounter = c + 2;
             }
-            if(isDone()){
-                running = false;
+            memory[indexOfProgramCounter - 1] = ProcessState.RUNNING;
+            System.out.println("Time = " + time);
+            System.out.println("Process " + memory[indexOfProgramCounter - 2] + " Currently Running.");
+            Interpreter.parseCode((Instruction) memory[(Integer)memory[indexOfProgramCounter]]);
+            System.out.println("Current Instruction executing is " + ((Instruction) memory[(Integer)memory[indexOfProgramCounter]]).getInstruction());
+            if(!Scheduler.getCurrentRunningProcess().getProcessControlBlock().getProcessState().equals(ProcessState.BLOCKED)){
+                for(Process e : processes){
+                    if(e.equals(p)){
+                        int indexToSet = (Integer)memory[indexOfProgramCounter] - (Integer) memory[indexOfProgramCounter + 1];
+                        e.getInstructions().set(indexToSet, (Instruction) memory[(Integer) memory[indexOfProgramCounter]]);
+                        Scheduler.getCurrentRunningProcess().getInstructions().set(indexToSet, (Instruction) memory[(Integer) memory[indexOfProgramCounter]]);
+                        if(!Scheduler.getCurrentRunningProcess().getProcessControlBlock().getProcessState().equals(ProcessState.BLOCKED))
+                            e.getProcessControlBlock().setProgramCounter(e.getProcessControlBlock().getProgramCounter() + 1);
+                        e.setCurrentExecutionTime(e.getCurrentExecutionTime() + 1);
+                        break;
+                    }
+                }
+                if(!Scheduler.getCurrentRunningProcess().getProcessControlBlock().getProcessState().equals(ProcessState.BLOCKED))
+                    memory[indexOfProgramCounter] = (Integer)memory[indexOfProgramCounter] + 1;
+            }else {
+                memory[indexOfProgramCounter - 1] = ProcessState.BLOCKED;
+            }
+            time++;
+            System.out.println(Arrays.deepToString(memory));
+            System.out.println();
+        }
+    }
+
+    public static void swapForCurrentProcess(){
+        for(Process e : disk.getProcessesOnDisk()){
+            if(e.equals(Scheduler.getCurrentRunningProcess())){
+                e.setInDisk(false);
+                disk.getProcessesOnDisk().remove(e);
+                break;
             }
         }
-        System.out.println(Arrays.deepToString(memory));
+        Process p = null;
+        for(int i = 0; i < placeholder; i++){
+            if(!(memory[i] instanceof Integer) || !(memory[i+1] instanceof ProcessState))
+                continue;
+            assert memory[i] instanceof Integer;
+            p = processToSwap((Integer)memory[i]);
+            if(p != null)
+                break;
+        }
+        assert p != null;
+        p.setInDisk(true);
+        for(Process e : processes){
+            if(e.equals(p))
+                e.setInDisk(true);
+        }
+        Scheduler.updateProcessToDisk(p);
+        disk.getProcessesOnDisk().add(p);
+        removeProcessFromMemory(p);
+        disk.saveDisk();
+        disk.write();
+        for(Process e : processes){
+            if(e.equals(Scheduler.getCurrentRunningProcess())){
+                e.setInDisk(false);
+                if(currentMemorySpace < e.getRequiredSizeInMemory()){
+                    swapForCurrentProcess();
+                }else {
+                    int pcAmount = e.getProcessControlBlock().getProgramCounter() - e.getProcessControlBlock().getMinimumInMemory();
+                    memory[placeholder] = e.getProcessControlBlock().getProcessID();
+                    memory[placeholder + 1] = ProcessState.RUNNING;
+                    memory[placeholder + 2] = placeholder + 8 + pcAmount;
+                    memory[placeholder + 3] = placeholder + 8;
+                    memory[placeholder + 4] = placeholder + 8 + e.getInstructions().size() - 1;
+                    memory[placeholder + 5] = e.getVar1();
+                    memory[placeholder + 6] = e.getVar2();
+                    memory[placeholder + 7] = e.getVar3();
+                    placeholder += 8;
+                    currentMemorySpace -= 8;
+                    for(Instruction i : e.getInstructions()){
+                        memory[placeholder++] = i;
+                        currentMemorySpace--;
+                    }
+                }
+                return;
+            }
+        }
     }
 
     private static boolean isDone(){
@@ -77,7 +144,33 @@ public class Kernel {
         return true;
     }
 
+    public static void finishCurrentProcess(){
+        for(Process e : processes){
+            if(e.equals(Scheduler.getCurrentRunningProcess())){
+                e.getProcessControlBlock().setProcessState(ProcessState.FINISHED);
+                for(int i = 0; i < memory.length; i++){
+                    if(memory[i] != null && memory[i] instanceof Integer && memory[i + 1] instanceof ProcessState && (Integer)memory[i] == e.getProcessControlBlock().getProcessID()){
+                        memory[i + 1] = ProcessState.FINISHED;
+                        return;
+                    }
+                }
+            }
+        }
+    }
 
+    public static void blockCurrentProcess(){
+        for(int i = 0; i < memory.length; i++){
+            if(memory[i] != null && memory[i] instanceof Integer && memory[i + 1] instanceof ProcessState && (Integer)memory[i] == Scheduler.getCurrentRunningProcess().getProcessControlBlock().getProcessID()){
+                memory[i + 1] = ProcessState.BLOCKED;
+                break;
+            }
+        }
+        for(Process e : processes){
+            if(e.equals(Scheduler.getCurrentRunningProcess())){
+                e.getProcessControlBlock().setProcessState(ProcessState.BLOCKED);
+            }
+        }
+    }
 
     public static void allocateProcessToMemory(int processID){
         try {
@@ -89,7 +182,7 @@ public class Kernel {
                 decodeInstruction(s, fullInstruction, instructions);
             }
             if(instructions.size() + 8 <= currentMemorySpace){
-                PCB pcb = new PCB(processID, placeholder + 8, placeholder + 8 + instructions.size());
+                PCB pcb = new PCB(processID, placeholder + 8, placeholder + 8 + instructions.size() - 1);
                 memory[placeholder++] = processID;
                 currentMemorySpace--;
                 memory[placeholder++] = pcb.getProcessState();
@@ -113,18 +206,25 @@ public class Kernel {
                 Process process = new Process("Program_" + processID, pcb, instructions.size(), instructions.size() + 8);
                 for(Instruction e : instructions)
                     process.getInstructions().add(e);
-                process.getProcessControlBlock().setProcessState(ProcessState.READY);
                 Scheduler.getReadyQueue().add(process);
                 processes.add(process);
             }else {
                 Process p = null;
-                for(int i = 0; i < placeholder; i += 8 + instructions.size()){
+                for(int i = 0; i < placeholder; i++){
+                    if(!(memory[i] instanceof Integer) || !(memory[i+1] instanceof ProcessState))
+                        continue;
+                    assert memory[i] instanceof Integer;
                     p = processToSwap((Integer)memory[i]);
                     if(p != null)
                         break;
                 }
                 assert p != null;
                 p.setInDisk(true);
+                for(Process e : processes){
+                    if(e.equals(p))
+                        e.setInDisk(true);
+                }
+                Scheduler.updateProcessToDisk(p);
                 disk.getProcessesOnDisk().add(p);
                 removeProcessFromMemory(p);
                 disk.saveDisk();
@@ -155,73 +255,31 @@ public class Kernel {
                 currentMemorySpace++;
             }
         }else if(memory[placeholder + 8 + p.getInstructions().size()] != null){
-            memory[placeholder] = memory[placeholder + 8 + p.getInstructions().size()];
-            memory[placeholder + 8 + p.getInstructions().size()] = null;
-            placeholder++;
-            currentMemorySpace++;
-            memory[placeholder] = memory[placeholder + 8 + p.getInstructions().size()];
-            memory[placeholder + 8 + p.getInstructions().size()] = null;
-            placeholder++;
-            currentMemorySpace++;
-            memory[placeholder] = memory[placeholder + 8 + p.getInstructions().size()];
-            memory[placeholder + 8 + p.getInstructions().size()] = null;
-            memory[placeholder] = (Integer)memory[placeholder] - 8 - p.getInstructions().size();
-            placeholder++;
-            currentMemorySpace++;
-            memory[placeholder] = memory[placeholder + 8 + p.getInstructions().size()];
-            memory[placeholder + 8 + p.getInstructions().size()] = null;
-            memory[placeholder] = (Integer)memory[placeholder] - 8 - p.getInstructions().size();
-            placeholder++;
-            currentMemorySpace++;
-            memory[placeholder] = memory[placeholder + 8 + p.getInstructions().size()];
-            memory[placeholder + 8 + p.getInstructions().size()] = null;
-            memory[placeholder] = (Integer)memory[placeholder] - 8 - p.getInstructions().size();
-            placeholder++;
-            currentMemorySpace++;
-            memory[placeholder] = memory[placeholder + 8 + p.getInstructions().size()];
-            memory[placeholder + 8 + p.getInstructions().size()] = null;
-            placeholder++;
-            currentMemorySpace++;
-            memory[placeholder] = memory[placeholder + 8 + p.getInstructions().size()];
-            memory[placeholder + 8 + p.getInstructions().size()] = null;
-            placeholder++;
-            currentMemorySpace++;
-            memory[placeholder] = memory[placeholder + 8 + p.getInstructions().size()];
-            memory[placeholder + 8 + p.getInstructions().size()] = null;
-            placeholder++;
-            currentMemorySpace++;
-            for(int i = 0; i < p.getInstructions().size(); i++){
-                memory[placeholder] = memory[placeholder + 8 + p.getInstructions().size()];
-                memory[placeholder + 8 + p.getInstructions().size()] = null;
+            int index = placeholder + 8 + p.getInstructions().size();
+            while(index < memory.length){
+                if(memory[index] instanceof Integer && memory[index + 1] instanceof ProcessState){
+                    memory[index + 2] = (Integer)memory[index + 2] - 8 - p.getInstructions().size();
+                    memory[index + 3] = (Integer)memory[index + 3] - 8 - p.getInstructions().size();
+                    memory[index + 4] = (Integer)memory[index + 4] - 8 - p.getInstructions().size();
+                    for(Process e : processes){
+                        if(e.getProcessControlBlock().getProcessID() == (Integer)memory[index]){
+                            e.getProcessControlBlock().setProgramCounter((Integer) memory[index + 2]);
+                            e.getProcessControlBlock().setMinimumInMemory((Integer)memory[index + 3]);
+                            e.getProcessControlBlock().setMaximumInMemory((Integer)memory[index + 4]);
+                            Scheduler.updateProcessContent(e);
+                        }
+                    }
+                }
+                memory[placeholder] = memory[index];
+                memory[index] = null;
                 placeholder++;
                 currentMemorySpace++;
+                index++;
+            }
+            while (memory[placeholder - 1] == null){
+                placeholder--;
             }
         }
-    }
-    private static void shifting(Process p)
-    {
-        for(int i = 0; i < memory.length; i++){
-            if(memory[i] instanceof Integer && ((Integer)memory[i]) == p.getProcessControlBlock().getProcessID()){
-                placeholder = i;
-                break;
-            }
-        }
-        for(int j =0 ; j< 3; j++){
-            for(int i =placeholder; i<currentMemorySpace; i ++){
-
-                memory[i+1] =memory[i];
-                memory[i] = null;
-            }
-        }
-
-
-    }
-    private static void memoryToDisk(){
-        //TODO
-    }
-
-    private static void diskToMemory(){
-        //TODO
     }
 
     private static void decodeInstruction(String instruction, String[] split, ArrayList<Instruction> instructions){
