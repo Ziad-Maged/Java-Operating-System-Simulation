@@ -26,16 +26,16 @@ public class Disk implements Serializable {
     }
 
     public String toString(){
-        StringBuilder string = new StringBuilder("");
+        StringBuilder string = new StringBuilder();
         for(Process e : processesOnDisk){
-            string.append(e.getProcessName()).append("\n").append(e.toString()).append("\n");
+            string.append(e.getProcessName()).append("\n").append(e).append("\n");
         }
         return string.toString();
     }
 
     public void write(){
         try {
-            PrintWriter writer = new PrintWriter(new File("DISK.txt"));
+            PrintWriter writer = new PrintWriter("DISK.txt");
             for(Process e : processesOnDisk){
                 writer.println(e.toString());
             }
